@@ -4,7 +4,7 @@ Convert an image sequence into a world-space 3D skeleton — ready for Autodesk 
 > **Note:** This repository contains reports and test materials alongside the tool.
 > The pipeline you need is located at:
 > ```
-> COMP693_26S1_Project_Xinyu_Zhang_1163218/Deliverables/automatic_rotomation/
+> Automatic-3D-Motion-Estimation/automatic_rotomation/
 > ```
 > All instructions below assume this folder as your working directory.
 
@@ -27,8 +27,8 @@ The pipeline chains three open-source tools into a single automated workflow:
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/COMP693-Projects-26S1/COMP693_26S1_Project_Xinyu_Zhang_1163218.git
-cd Deliverables/automatic_rotomation
+git clone https://github.com/ZhangXinyu-Mili/Automatic-3D-Motion-Estimation.git
+cd automatic_rotomation
 ```
 
 ### 2. Create a virtual environment
@@ -184,10 +184,7 @@ Hip
 ## Troubleshooting
 
 **No images found in folder**
-Only `.jpg` / `.jpeg` files are accepted. Convert PNG frames with:
-```bash
-mogrify -format jpg /path/to/frames/*.png
-```
+Only `.jpg` / `.jpeg` files are accepted. 
 
 **Frame mismatch error**
 The frame range in `camera_data.json` doesn't match the range entered during preprocessing. Re-export the camera JSON with the same frame numbers, or rerun preprocessing with the matching range.
@@ -217,5 +214,3 @@ A `WARNING: Length not stable!` message means a bone varies more than 2 cm acros
 - [ ] `VideoPose3D-main/` is placed inside `automatic_rotomation/` with `pretrained_h36m_cpn.bin` in its `checkpoint/` folder
 - [ ] Input frames are JPEG with no gaps in frame numbers
 - [ ] Camera JSON exported from Maya with matching start/end frames
-- [ ] Sufficient disk space in the project folder (allow ~2 GB per shot)
-- [ ] GPU drivers and CUDA toolkit match the installed PyTorch build

@@ -3,7 +3,7 @@
 Test shots are provided so you can verify the pipeline is working correctly before using your own footage. They are located at:
 
 ```
-COMP693_26S1_Project_Xinyu_Zhang_1163218/Deliverables/test_shots/
+Automatic-3D-Motion-Estimation/test_shots/
 ```
 
 
