@@ -677,7 +677,7 @@ def compute_z_values(F, keypoints_2d, confidence, K, canonical_bone_lengths, bon
     Z_values = uniform_filter1d(Z_raw, size=15)
 
     print(f"Z depth range(Depth between camera and character): {Z_values.min():.1f} – {Z_values.max():.1f} cm")
-    print(f"Z depth std/mean: {Z_values.std()/Z_values.mean():.3f}  (good if < 0.15)")
+    print(f"Z depth std/mean: {Z_values.std()/Z_values.mean():.3f} ")
     return Z_values
 
 def compute_root_world_positions(F, keypoints_2d, Z_values, K, R_frames, t_frames):

@@ -66,7 +66,7 @@ pip install -r requirements.txt
 
 ## YOLO Model
 
-The model `yolo26x-pose.pt` is downloaded automatically on first run and saved next to `detection_process.py`. No manual action is required.
+The model `yolo26x-pose.pt` is downloaded automatically on first run. No manual action is required.
 
 For offline setups, download it manually and place it inside `automatic_rotomation/`:
 
@@ -184,7 +184,10 @@ Hip
 ## Troubleshooting
 
 **No images found in folder**
-Only `.jpg` / `.jpeg` files are accepted. 
+Only `.jpg` / `.jpeg` files are accepted. Convert PNG frames with:
+```bash
+mogrify -format jpg /path/to/frames/*.png
+```
 
 **Frame mismatch error**
 The frame range in `camera_data.json` doesn't match the range entered during preprocessing. Re-export the camera JSON with the same frame numbers, or rerun preprocessing with the matching range.
@@ -214,3 +217,5 @@ A `WARNING: Length not stable!` message means a bone varies more than 2 cm acros
 - [ ] `VideoPose3D-main/` is placed inside `automatic_rotomation/` with `pretrained_h36m_cpn.bin` in its `checkpoint/` folder
 - [ ] Input frames are JPEG with no gaps in frame numbers
 - [ ] Camera JSON exported from Maya with matching start/end frames
+- [ ] Sufficient disk space in the project folder (allow ~2 GB per shot)
+- [ ] GPU drivers and CUDA toolkit match the installed PyTorch build

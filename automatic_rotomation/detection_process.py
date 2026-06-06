@@ -20,12 +20,13 @@ def run_yolo_pose_tracking(
     frames = []
 
     # Load model
-    model_path = os.path.join(os.path.dirname(__file__), model_name)
-    if not os.path.exists(model_path):
-        url = "https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo26x-pose.pt"
-        urllib.request.urlretrieve(url, model_path)
-
-    model = YOLO(model_path)
+    try:
+        model = YOLO(model_name)
+    except Exception as e:
+        raise RuntimeError(
+            f"Unable to load YOLO model '{model_name}'.\n"
+            f"Reason: {e}"
+        )
 
     # Load images
     image_paths = sorted(glob.glob(os.path.join(image_folder, "*.jpg")))

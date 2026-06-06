@@ -1,7 +1,8 @@
 import os
+import cv2
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
+from matplotlib.animation import FuncAnimation, FFMpegWriter
 
 from global_motion_recovery import SKELETON, project_points
 
@@ -61,11 +62,79 @@ def run_videopose3d_preview(frames, predicted_3d, output_path):
  
     update = make_videopose3d_update_fn(frames, predicted_3d, ax_video, ax_3d)
  
-    ani = FuncAnimation(fig, update, frames=num_frames, interval=40)
-    ani.save(output_path, writer="ffmpeg")
+    ani = FuncAnimation(
+        fig,
+        update,
+        frames=num_frames,
+        interval=40
+    )
+
+    save_animation_with_fallback(
+        ani,
+        fig,
+        update,
+        num_frames,
+        output_path,
+        fps=24
+    )
     plt.close(fig)
     print(f"Saved 3D preview to {output_path}")
- 
+
+def save_animation_with_fallback(ani, fig, update_fn,
+                                 num_frames, output_path, fps=24):
+
+    # First try FFmpeg
+    if FFMpegWriter.isAvailable():
+        try:
+            ani.save(output_path, writer="ffmpeg")
+            print(f"Saved video using FFmpeg: {output_path}")
+            return
+        except Exception as e:
+            print(f"FFmpeg save failed: {e}")
+
+    print("FFmpeg unavailable. Falling back to OpenCV VideoWriter...")
+
+    fig.canvas.draw()
+    width, height = fig.canvas.get_width_height()
+
+    writer = cv2.VideoWriter(
+        output_path,
+        cv2.VideoWriter_fourcc(*'mp4v'),
+        fps,
+        (width, height)
+    )
+
+    if not writer.isOpened():
+        raise RuntimeError(
+            f"Failed to create video: {output_path}"
+        )
+
+    for frame_idx in range(num_frames):
+
+        update_fn(frame_idx)
+
+        fig.canvas.draw()
+
+        img = np.frombuffer(
+            fig.canvas.buffer_rgba(),
+            dtype=np.uint8
+        )
+
+        img = img.reshape(
+            (height, width, 4)
+        )
+
+        img = cv2.cvtColor(
+            img,
+            cv2.COLOR_RGBA2BGR
+        )
+
+        writer.write(img)
+
+    writer.release()
+
+    print(f"Saved video using OpenCV: {output_path}")
+
 # World-space skeleton animation
 def build_figure(frames, poses_3d_world):
     """
@@ -210,12 +279,24 @@ def run_animation(frames, poses_3d_world, keypoints_2d, K, R_frames, t_frames, i
         lines3d, root_dot_3d,
     )
 
-    ani = FuncAnimation(fig, update, frames=F, interval=interval)
+    ani = FuncAnimation(
+        fig,
+        update,
+        frames=F,
+        interval=interval
+    )
 
     if output_path is not None:
-        ext = os.path.splitext(output_path)[1].lower()
-        writer = "pillow" if ext == ".gif" else "ffmpeg"
-        ani.save(output_path, writer=writer)
-        print(f"Saved animation to {output_path}")
+
+        fps = max(1, int(1000 / interval))
+
+        save_animation_with_fallback(
+            ani,
+            fig,
+            update,
+            F,
+            output_path,
+            fps
+        )
 
     plt.show()
