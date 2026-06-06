@@ -78,8 +78,6 @@ The script:
 
 This JSON file acts as the only coupling point between Maya and the Python pipeline.
 
----
-
 ## 2. Video Preprocessing
 
 `video_preprocess.py`:
@@ -97,7 +95,6 @@ The module returns:
 
 back to `run.py`.
 
----
 
 ## 3. Detection and 3D Reconstruction
 
@@ -136,7 +133,6 @@ and returns:
 
 directly to `run.py`.
 
----
 
 ## 4. Global Motion Recovery
 
@@ -162,7 +158,6 @@ Results are:
 - returned to `run.py`
 - saved as `predicted_3d_world.npy`
 
----
 
 ## 5. Maya Motion Import
 
@@ -179,7 +174,6 @@ The script:
 
 This produces a clean baked animation skeleton inside Maya.
 
----
 
 # Algorithm Logic
 
@@ -191,7 +185,6 @@ For VFX workflows involving moving cameras, this output is not directly usable i
 
 The global motion recovery system converts camera-space motion into stable world-space motion using a six-stage reconstruction pipeline.
 
----
 
 # 1. Root-Relative Pose Extraction
 
@@ -207,7 +200,6 @@ This isolates:
 
 from global movement.
 
----
 
 # 2. Bone Length Enforcement
 
@@ -237,7 +229,6 @@ Examples include:
 
 This improves anatomical consistency and reduces visual jitter.
 
----
 
 # 3. Depth Estimation from Canonical Bone Lengths
 
@@ -257,7 +248,6 @@ Where:
 
 The method assumes that objects appear smaller as they move further from the camera.
 
----
 
 ## Bone Priority System
 
@@ -275,7 +265,6 @@ A bone is only accepted if:
 
 This avoids unstable depth estimates from noisy detections.
 
----
 
 ## Temporal Smoothing
 
@@ -285,7 +274,6 @@ Raw depth estimates are smoothed using a:
 
 This reduces frame-to-frame jitter.
 
----
 
 # 4. Root Back-Projection to World Space
 
@@ -316,7 +304,6 @@ Where:
 
 This anchors the character into scene space.
 
----
 
 # 5. Pose Assembly in World Space
 
@@ -330,7 +317,6 @@ P_world[j] = R_cam^T × P_local[j] + P_root_world
 
 This reconstructs the complete world-space skeleton pose for every frame.
 
----
 
 # 6. Reprojection-Based IK Refinement
 
@@ -338,7 +324,6 @@ The final stage performs partial inverse kinematics optimisation using SciPy's `
 
 A weighted multi-objective loss function is minimised over a subset of 14 joints.
 
----
 
 ## Optimisation Loss Terms
 
@@ -351,7 +336,6 @@ A weighted multi-objective loss function is minimised over a subset of 14 joints
 | Hip constraint | `3.0` | Preserves hip alignment |
 | Neck/head constraint | `3.0` | Maintains head-neck-thorax ordering |
 
----
 
 ## Optimisation Strategy
 
